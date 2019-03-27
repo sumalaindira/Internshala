@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Internshala">
+
+	<insert id="saveFileUploadDetails" parameterType="map">
+		INSERT INTO
+		eoi.fileuploaddetails(filepath,fileextension,
+		logtime)
+		VALUES(#{p1.filePath},#{p1.fileExtension},current_timestamp);
+	</insert>
+
+
+	<select id="getInternshalaSummary" parameterType="map"
+		resultType="map">
+		select * from eoi.intrenshala_details where
+		collegeid =
+		#{p.collegeId} order by registrationid,name,collegecourseid
+	</select>
+
+	<insert id="submitDetails" parameterType="map">
+		insert into
+		eoi.intrenshala_details(spocname,registrationid,year,
+		spocphone,spocemail,aadhaar,
+		collegename,name,email,phone,logtime,ipaddress)
+		values(#{p.spocName},
+		#{p.registrationId},#{p.year},#{p.spocPhone},#{p.spocEmail},#{p.aadhaar},#{p.collegeName},
+		#{p.name},#{p.phone},#{p.email},current_timestamp,#{p.ipAddress})
+	</insert>
+</mapper>

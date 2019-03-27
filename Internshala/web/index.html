@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Andhra Pradesh State Skill Developemt Corporation</title>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="APSSDC">
+<meta name="author" content="APSSDC PMDC">
+<link rel="icon" href="images/applicationIcon.jpg">
+<link href="/uif/css/bootstrap/bootstrap.min.css" rel="stylesheet">
+<link href="/uif/css/bootstrap/bootstrap-theme.min.css" rel="stylesheet">
+<link href="/uif/css/bootstrap/prettyPhoto.css" rel="stylesheet">
+<link rel="stylesheet" href="/uif/css/bootstrap/angular-ui.min.css">
+<link rel="stylesheet" href="/schools/css/sweetalert.css">
+<link href="/eoi/css/bootstrap/jquery-ui.css" rel="stylesheet">
+<link href="/andromeda/css/general/font-awesome.min.css" rel="stylesheet">
+<link href="/uif/css/bootstrap/jquery-ui.css" rel="stylesheet">
+<script type="text/javascript" src="/andromeda/scripts/lib/jquery-2.1.1.js"></script>
+<script type="text/javascript" src="/andromeda/scripts/lib/bootstrap.min.js"></script>
+<script src="/uif/scripts/lib/angular.js"></script>
+<script type="text/javascript" src="/andromeda/scripts/lib/jquery-ui.min.js"></script>
+<script type="text/javascript" src="/uif/scripts/lib/jspdf.min.js"></script>
+<script type="text/javascript" src="/uif/scripts/lib/jquery.prettyPhoto.js"></script>
+<script type="text/javascript" src="/uif/scripts/lib/jspdf.plugin.autotable.js"></script>
+<script src="/schools/scripts/lib/sweetalert-dev.js"></script>
+<script src="/uif/scripts/lib/sortable.js"></script>
+<script src="/uif/scripts/lib/angular-base64.js"></script>
+<script src="/uif/scripts/lib/FileSaver.js"></script>
+<script src="/andromeda/scripts/lib/angular/angular.js"></script>
+<script src="/uif/scripts/lib/angular-ui.min.js"></script>
+<script src="/uif/scripts/lib/angular-base64.min.js"></script>
+<script src="/uif/scripts/lib/jquery.cookie.js"></script>
+
+
+<!-- Custom scripts for this template -->
+<script src="/internshala/scripts/common/menuActions.js"></script>
+<script src="/internshala/scripts/common/Andromeda.js"></script>
+
+<!-- Built in JS -->
+<script src="/sdc/scripts/lib/angular-sanitize.js"></script>
+<script src="/sdc/scripts/lib/angular-animate.js"></script>
+<script src="/andromeda/scripts/lib/angular/angular-ui.min.js"></script>
+<script src="/sdc/scripts/lib/ui-bootstrap-tpls-2.5.0.js"></script>
+<script src="/eoi/scripts/lib/angular-tablesort.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.12.0/xlsx.full.min.js"></script>
+<script src="/schools/scripts/lib/xlsx-model.js"></script>
+
+<script src="/internshala/scripts/general/internshalaModule.js"></script>
+<!-- <script src="/eoi/scripts/general/xlsx-model.js"></script>
+<script src="/eoi/scripts/general/applicationCommons.js"></script> -->
+
+<style type="text/css">
+.glyphicon-refresh-animate {
+	-animation: spin .7s infinite linear;
+	-ms-animation: spin .7s infinite linear;
+	-webkit-animation: spinw .7s infinite linear;
+	-moz-animation: spinm .7s infinite linear;
+}
+
+@
+keyframes spin {from { transform:scale(1)rotate(0deg);
+	
+}
+
+to {
+	transform: scale(1) rotate(360deg);
+}
+
+}
+@
+-webkit-keyframes spinw {from { -webkit-transform:rotate(0deg);
+	
+}
+
+to {
+	-webkit-transform: rotate(360deg);
+}
+
+}
+@
+-moz-keyframes spinm {from { -moz-transform:rotate(0deg);
+	
+}
+
+to {
+	-moz-transform: rotate(360deg);
+}
+
+}
+a {
+	cursor: pointer;
+}
+</style>
+<img class="img-responsive" src="/internshala/images/internshala_banner.png"
+	alt="No image found" width="1500" />
+<nav class="navbar navbar-default" id="navBar1">
+	<div class="container-fluid">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse"
+				data-target="#navBarDiv1">
+				<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+					class="icon-bar"></span>
+			</button>   
+		</div>
+		 <div class="collapse navbar-collapse" id="navBarDiv1">
+			<ul class="nav navbar-nav">
+				<li class="active" onclick="window.location.reload();"><a>Home</a></li>
+				<!-- <li id="mouhide" onclick="eoiMouRegistration();"><a>EoI MoU</a></li> -->
+				<li  id="intreshala" onclick="internshalaReg();"><a>Registration</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+					    <li><marquee>If problem persist please mail to kishalaya@internshala.com</marquee></li>
+						<!-- <li onclick="Andromeda.logout();">
+							<a>	<span class="glyphicon glyphicon-log-out" style="color: white;"></span>	Logout</a>
+						</li> -->
+					</ul>
+		</div>
+	</div>
+</nav>
+<div class="container" id="amdContainerDiv"> 
+
+<div class="panel panel-default" style="width: 100%">
+			<div class="panel-heading">
+				<h5 style="font-size: large;" class="text-center"> Internship Day Registration </h5>
+			</div>
+			<div class="panel-body">
+			 <p>
+			     APSSDC along with Internshala is hosting an Internship Day in August. In this event, the colleges with highest internship selections from 1st April - 31st July 2018 will be rewarded. Internshala will provide all necessary support and guidance to the colleges to help place their students.
+			 </p>
+				<p>
+					<b style="color: red; text-decoration: underline;">Important guidelines </b>
+				</p>
+				<ul style="list-style-type: disc; margin-left: -1%;">
+					<li>Please upload the details of all the students enrolled in your colleges (1st -4th year).&nbsp;&nbsp; <a
+						href="http://engineering.apssdc.in/uploads/Sample.xlsx"
+						style="color: #2a6496; text-decoration: underline;"
+						target="_blank"> Download sample file&nbsp;&nbsp; <img
+							alt="No image" src="/andromeda/images/icons/excel-icon.png"
+							style="height: 22px; width: 15px;">
+					</a>
+					</li>
+					 <li>While uploading, please follow ensure that the excel sheet contains the following information of the students - Name, email address, phone number & Aadhar number. </li>
+                     <li>Only internship selections from Internshala will be taken into account so please make sure all the student details are submitted. All these students will get an Internshala account through which they can apply to internships.</li>
+                          <a class="reg" onclick="internshalaReg();">Click here for Registration</a>
+				</ul>
+          </div>
+     
+ <script type="text/javascript">   
+           jQuery(document).ready(function(){
+        	   $(".nav li").on("click", function() {
+        	      $(".nav li").removeClass("active");
+        	     // $(".reg").removeClass("active");
+        	      $(this).addClass("active");
+        	    });
+           });
+</script>
+
+</div>  
+  

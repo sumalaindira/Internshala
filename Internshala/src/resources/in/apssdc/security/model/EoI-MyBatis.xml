@@ -1,0 +1,1435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="EoI">
+
+	<select id="getEamcetCode" parameterType="map" resultType="java.lang.String">
+		select eamcetcode from
+		apsche.colleges_engineering where id =
+		#{collegeId}
+	</select>
+
+	<select id="getCollegeDetailsById" resultType="College"
+		parameterType="map">
+		select c.*,d.*,(case when c.autonomous is true then
+		'Yes' end) as
+		autonomous,(case when c.deemed is true then 'Yes' end) as
+		deemed from (select a.*,b.* from (SELECT * from
+		apsche.colleges_engineering)a left join (select id as uid,name as
+		universityname from apsche.universities)b on a.universityid=b.uid ) c
+		left join (select districtid as did,districtname from
+		apssdc.district_mst)d on c.districtid=d.did where id=#{p.collegeId}
+	</select>
+
+	<select id="getDistrictName" parameterType="map" resultType="java.lang.String">
+		select districtname from
+		apssdc.district_mst where districtid =
+		#{districtId}
+	</select>
+
+	<select id="getPrimaryDetails" parameterType="map" resultType="CollegeModel">
+		select distinct a.*, b.crthouseavailable, c.residential, d.sdctimings,
+		e.interested from
+		(select id, name, eamcetcode, districtid,
+		universityid, eoicentre,
+		polytechnicintegrated, spaceavailableforsdc
+		from
+		apsche.colleges_engineering) a
+		left join (select
+		collegeid,crthouseavailable from
+		eoi.campus_recruitment_training_current) b on (a.id = b.collegeid)
+		left
+		join (select collegeid,residential from
+		eoi.residential_facilities_current) c on (a.id = c.collegeid) left
+		join
+		(select collegeid,sdctimings from eoi.college_sdc_timings_current)
+		d
+		on (a.id = d.collegeid) left join (select collegeid,interested from
+		eoi.sdc_social_activities_current) e on (a.id =
+		e.collegeid) where
+		id=#{p.collegeId}
+	</select>
+
+	<select id="checkPrimaryDetails" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from apsche.colleges_engineering WHERE
+		id =
+		#{p.collegeId}
+		LIMIT 1
+	</select>
+
+	<insert id="savePrimaryDetails" parameterType="map">
+		insert into
+		apsche.colleges_engineering(collegeid,eoicentre,polytechnicintegrated,spaceavailableforsdc,ipaddress,logtime)
+		values(#{p.collegeId},#{p.eoiCentre},#{p.polytechnicIntegrated},#{p.spaceAvailableforSDC},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updatePrimaryDetails" parameterType="map">
+		update
+		apsche.colleges_engineering set
+		eoicentre=#{p.eoiCentre},
+		polytechnicintegrated
+		=#{p.polytechnicIntegrated},spaceavailableforsdc=#{p.spaceAvailableforSDC},logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where id = #{p.collegeId}
+	</update>
+	<select id="checkCRTHouseAvailableStatus" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from
+		eoi.campus_recruitment_training_current WHERE
+		collegeid =
+		#{p.collegeId}
+		LIMIT 1
+	</select>
+
+	<insert id="saveCRTHouseAvailableStatus" parameterType="map">
+		insert
+		into
+		eoi.campus_recruitment_training_current(collegeid,crtHouseAvailable,ipaddress,logtime)
+		values(#{p.collegeId},#{p.crtHouseAvailable},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateCRTHouseAvailableStatus" parameterType="map">
+		update
+		eoi.campus_recruitment_training_current set crtHouseAvailable =
+		#{p.crtHouseAvailable},logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where collegeid = #{p.collegeId}
+	</update>
+	<select id="checkResidentialStatus" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.residential_facilities_current
+		WHERE
+		collegeid = #{p.collegeId}
+		LIMIT 1
+	</select>
+
+	<insert id="saveResidentialStatus" parameterType="map">
+		insert into
+		eoi.residential_facilities_current(collegeid,residential,ipaddress,logtime)
+		values(#{p.collegeId},#{p.residential},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateResidentialStatus" parameterType="map">
+		update
+		eoi.residential_facilities_current set residential =
+		#{p.residential},logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid = #{p.collegeId}
+	</update>
+	<select id="checkSdcTimingsStatus" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.college_sdc_timings_current WHERE
+		collegeid = #{p.collegeId}
+		LIMIT 1
+	</select>
+
+	<insert id="saveSdcTimingsStatus" parameterType="map">
+		insert into
+		eoi.college_sdc_timings_current(collegeid,sdcTimings,ipaddress,logtime)
+		values(#{p.collegeId},#{p.sdcTimings},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateSdcTimingsStatus" parameterType="map">
+		update
+		eoi.college_sdc_timings_current set sdcTimings =
+		#{p.sdcTimings},logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid = #{p.collegeId}
+	</update>
+	<select id="checkInterestedStatus" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.sdc_social_activities_current
+		WHERE
+		collegeid = #{p.collegeId}
+		LIMIT 1
+	</select>
+
+	<insert id="saveInterestedStatus" parameterType="map">
+		insert into
+		eoi.sdc_social_activities_current(collegeid,interested,ipaddress,logtime)
+		values(#{p.collegeId},#{p.interested},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateInterestedStatus" parameterType="map">
+		update
+		eoi.sdc_social_activities_current set interested =
+		#{p.interested},logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid = #{p.collegeId}
+	</update>
+
+
+	<select id="getCollegeManagementDetails" parameterType="map"
+		resultType="College">
+		select a.*,b.name as department from (select distinct
+		initcap(name) as spocName,id as serialNumber, gender,
+		employeeId,aadhaar,
+		phone, email spocEmail, designation,authorizedtype
+		as apssdcAuthPerson,
+		qualifications qualification,departmentid from
+		apsche.college_managements where
+		collegeid= #{p.collegeId}) a left join
+		apssdc.courses b on a.departmentid=b.id
+	</select>
+
+	<select id="getCollegeManagementDetails1" parameterType="map"
+		resultType="College">
+		select a.*,b.name as department from (select distinct
+		initcap(name) as spocName,id as serialNumber, gender,
+		employeeId,aadhaar,
+		phone, email spocEmail, designation,authorizedtype
+		as apssdcAuthPerson,
+		qualifications qualification,departmentid from
+		apsche.college_managements where
+		collegeid = #{p.collegeId}) a left
+		join apssdc.courses b on a.departmentid=b.id
+	</select>
+
+	<select id="getCollegeManagementDetailsByInfo" parameterType="map"
+		resultType="College">
+		select a.*,b.* from (select a.*,b.name as department from
+		(select distinct initcap(name) as spocName,id as serialNumber,
+		gender,collegeid,
+		employeeId,aadhaar,
+		phone, email spocEmail,
+		designation as design,authorizedtype as apssdcAuthPerson,
+		qualifications qualification,departmentid from
+		apsche.college_managements ) a left join apssdc.courses b on
+		a.departmentid=b.id)a left join (select id as deisgnationid,name as
+		designation,type from apsche.designations_engineering)b on
+		a.design=b.designation where b.type=#{p.type} and
+		collegeid =
+		#{p.collegeId}
+	</select>
+
+	<select id="getDesignationsByTypeInfo" parameterType="map"
+		resultType="College">
+		select id,name as designation,type from
+		apsche.designations_engineering where type=#{p.type}
+	</select>
+
+
+	<update id="updateSPOCdetails" parameterType="map">
+		update
+		apsche.college_managements set name = #{p.spocName}, employeeid =
+		#{p.employeeId}, designation = #{p.designation},
+		departmentid =
+		#{p.departmentId}, qualifications = #{p.qualification}, gender =
+		#{p.gender}, phone = #{p.phone},
+		email = #{p.spocEmail}, authorizedtype
+		= #{p.apssdcAuthPerson}, districtid
+		= #{p.districtId}, aadhaar =
+		#{p.aadhaar}
+		where (collegeid =
+		#{p.collegeId} AND (aadhaar =
+		#{p.aadhaar} OR email = #{p.spocEmail}
+		OR employeeid =
+		#{p.employeeId})) and id=#{p.serialNumber}
+	</update>
+
+	<update id="updateSPOCdetails1" parameterType="map">
+		update
+		apsche.college_managements set name = #{p.spocName}, employeeid =
+		#{p.employeeId},
+		phone = #{p.phone}, email = #{p.spocEmail}
+		WHERE
+		collegeid =
+		#{p.collegeId} AND
+		aadhaar =
+		#{p.aadhaar} and
+		id=#{p.serialNumber}
+	</update>
+
+	<select id="checkSPOCDetails" parameterType="map" resultType="java.lang.Integer">
+		select count(*) from apsche.college_managements WHERE
+		(collegeid =
+		#{p.collegeId} AND (aadhaar = #{p.aadhaar} OR email = #{p.spocEmail}
+		OR employeeid = #{p.employeeId}))
+		LIMIT 1
+	</select>
+
+	<select id="checkSPOCDetails1" parameterType="map" resultType="java.lang.Integer">
+		select count(*) from apsche.college_managements WHERE
+		collegeid=#{p.collegeId} AND aadhaar = #{p.aadhaar}
+	</select>
+
+	<insert id="saveSPOCdetails" parameterType="map">
+		insert into
+		apsche.college_managements(collegeid, name, employeeid,
+		designation,
+		departmentid,qualifications, gender,phone, email,authorizedtype,
+		aadhaar, districtId)
+		values(#{p.collegeId},#{p.spocName},#{p.employeeId},#{p.designation},#{p.departmentId},
+		#{p.qualification},#{p.gender},#{p.phone},#{p.spocEmail},#{p.apssdcAuthPerson},
+		#{p.aadhaar},
+		#{p.districtId})
+	</insert>
+
+	<select id="getCollegeStudentsSummary" parameterType="map"
+		resultType="map">
+		select * from eoi.batch_students where
+		collegeid =
+		#{p.collegeId} order by registrationid,name,collegecourseid
+	</select>
+
+	<select id="getIntrenshalaSummary" parameterType="map"
+		resultType="map">
+		select * from eoi.intrenshala_student_details where
+		collegeid =
+		#{p.collegeId} order by registrationid,name,collegecourseid
+	</select>
+
+	<select id="singleCollegeStudentsSummaryGetById" parameterType="map"
+		resultType="map">
+		select * from eoi.batch_students where
+		id::int=#{p.registrationid}::int;
+	</select>
+	<select id="UpdateSingleCollegeStudentsSummaryGetById"
+		parameterType="map" resultType="StudentRegistrationModal">
+		update eoi.batch_students set
+		aadhaar
+		=#{p.aadhaar},
+		registrationid=#{p.registrationid},
+		name=#{p.name},
+		gender=#{p.gender},
+		email=#{p.email},
+		phone=#{p.phone},
+		category=#{p.category},
+		graduationbranch=#{p.graduationbranch},
+		graduationyear=#{p.graduationyear},
+		companyname =#{p.companyname},
+		companypackage=#{p.companypackage},
+		workinglocation=#{p.workinglocation},
+		highestqualificaion=#{p.highestqualificaion} where
+		registrationid=#{p.registrationid} and id=#{p.id};
+	</select>
+
+	<select id="getSingleCollegeStudentsSummary" parameterType="map"
+		resultType="CollegeStudentsSummary">
+		select id,collegeid,degree, departmentid, academicyear,
+		year, availableseats,
+		admittedseats, passedstudents, placedstudents
+		from
+		eoi.college_students_summary_current where
+		collegeid =
+		#{p.collegeId} order by academicyear desc,degree
+	</select>
+
+	<delete id="deleteSingleCollegeStudentsSummary" parameterType="map">
+		delete from eoi.college_students_summary_current where
+		collegeid=#{p.collegeId} and id=#{p.id};
+	</delete>
+
+
+	<insert id="saveSingleCollegeStudentsSummaryDetails"
+		parameterType="map">
+		insert into
+		eoi.college_students_summary_current(collegeid,degree, departmentid,
+		academicyear, year, availableseats,
+		admittedseats, passedstudents,
+		placedstudents,ipaddress,logtime)
+		values(#{p.collegeId},#{p.degree},#{p.departmentId},#{p.academicYear},#{p.year},#{p.availableSeats},#{p.admittedSeats},#{p.passedStudents},#{p.placedStudents},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateSingleCollegeStudentsSummaryDetails"
+		parameterType="map">
+		update
+		eoi.college_students_summary_current set degree =
+		#{p.degree},
+		departmentid = #{p.departmentId},
+		academicyear =
+		#{p.academicYear},
+		year = #{p.year},
+		availableseats =
+		#{p.availableSeats},
+		admittedseats = #{p.admittedSeats},
+		passedstudents
+		= #{p.passedStudents},
+		placedstudents = #{p.placedStudents},
+		logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid =
+		#{p.collegeId} and id=#{p.id}
+	</update>
+	<select id="getSoftwaresList" parameterType="map" resultType="Softwares">
+		select id, collegeid, academicyear, name, nooflicenses from
+		eoi.softwares_current where
+		collegeid = #{p.collegeId}
+	</select>
+
+	<insert id="saveSoftwareDetails" parameterType="map">
+		insert into
+		eoi.softwares_current(collegeid,academicyear,
+		name,nooflicenses,ipaddress,logtime)
+		values(#{p.collegeId},#{p.academicYear},#{p.name},#{p.noOfLicenses},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateSoftwareDetails" parameterType="map">
+		update
+		eoi.softwares_current set
+		academicyear = #{p.academicYear},
+		name =
+		#{p.name},
+		nooflicenses =
+		#{p.noOfLicenses},
+		logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid =
+		#{p.collegeId} and id=#{p.id}
+	</update>
+
+	<select id="getServersList" parameterType="map" resultType="Servers">
+		select id, collegeid, academicyear, processor, ram, harddisk, model
+		from
+		eoi.servers_current where
+		collegeid = #{p.collegeId}
+	</select>
+	<insert id="saveServerDetails" parameterType="map">
+		insert into
+		eoi.servers_current(collegeid, academicyear, processor, ram, harddisk,
+		model,ipaddress,logtime)
+		values(#{p.collegeId},#{p.academicYear},#{p.processor},#{p.ram},#{p.hardDisk},#{p.model},#{p.ipAddress},current_timestamp)
+	</insert>
+	<update id="updateServerDetails" parameterType="map">
+		update
+		eoi.servers_current set
+		academicyear = #{p.academicYear},
+		processor =
+		#{p.processor},
+		ram = #{p.ram},
+		harddisk = #{p.hardDisk},
+		model =
+		#{p.model},
+		logtime=CURRENT_TIMESTAMP,ipAddress=#{p.ipAddress}
+		where
+		collegeid =
+		#{p.collegeId} and id=#{p.id}
+	</update>
+
+
+	<select id="getClgBasicDetails" parameterType="java.lang.Integer"
+		resultType="CollegeModel">
+		select b.districtname, c.name universityname, a.* from
+		(select districtid, id, name, eamcetcode,autonomous, universityid,
+		yearofestablishment, mobiles, website, lattitude, longitude,
+		landlinenos, socialnetworkinglinks,
+		aicteapprovalno
+		aicteApprovalNo,teqipthree teqipThree ,naacaccredited naacAccredited
+		,tutionfee tutionFee ,nbaaccrediationbtech nbaAccrediationBtech,
+		naacaccrediationmtech naacAccrediationMtech ,
+		(address).pincode,
+		(address).doorno, (address).street, (address).villagename,
+		(address).mandalname, (address).districtname, (address).statename
+		from
+		apsche.colleges_engineering where id = #{collegeId}) a left join
+		apssdc.district_mst b on (a.districtid = b.districtid) left join
+		apsche.universities c
+		on (a.universityid = c.id);
+	</select>
+
+	<update id="saveClgBasicDetails" parameterType="map">
+		update
+		apsche.colleges_engineering set
+		universityid = #{p.universityId},
+		yearofestablishment = #{p.yearOfEstablishment},
+		autonomous=#{p.autonomous},
+		mobiles =
+		#{p.mobiles},
+		website =
+		#{p.website},
+		socialnetworkinglinks =
+		#{p.socialNetworkingLinks},
+		landlinenos = #{p.landLinenos},
+		lattitude = #{p.lattitude}::double
+		precision,
+		longitude = #{p.longitude}::double precision,
+		aicteapprovalno
+		=#{p.aicteApprovalNo},
+		teqipthree =#{p.teqipThree},
+		naacaccredited
+		=#{p.naacAccredited},
+		tutionfee =#{p.tutionFee},
+		nbaaccrediationbtech
+		=#{p.nbaAccrediationBtech},
+		naacaccrediationmtech
+		=#{p.naacAccrediationMtech},
+		address = ROW(#{p.pincode}, #{p.doorno},
+		initcap(#{p.street}),
+		initcap(#{p.villageName}),initcap(#{p.mandalName}),
+		initcap(#{p.districtName}), initcap(#{p.stateName})
+		), logtime =
+		current_timestamp WHERE id = #{p.collegeId};
+	</update>
+
+	<select id="getCRTStatus" parameterType="java.lang.Integer"
+		resultType="java.lang.Boolean">
+		select crtHouseAvailable from
+		eoi.campus_recruitment_training_current where collegeid = #{collegeId}
+		AND crtHouseAvailable = true limit 1;
+	</select>
+
+	<select id="getCRTDetails" parameterType="java.lang.Integer"
+		resultType="CRT">
+		select distinct id, collegeid, academicyear,
+		crthouseavailable, companyname, areaoftraining from
+		eoi.campus_recruitment_training_current
+		where companyname is not null
+		and collegeid = #{collegeId} order by academicyear DESC;
+	</select>
+
+	<select id="checkCRTDetails" parameterType="map" resultType="CRT">
+		select * from eoi.campus_recruitment_training_current where collegeid
+		= #{p.collegeId} and crthouseavailable = true and
+		academicyear =
+		#{p.academicYear} and companyname = #{p.companyName} and
+		areaoftraining = #{p.areaOfTraining};
+	</select>
+
+	<select id="getResidenceStaus" parameterType="java.lang.Integer"
+		resultType="java.lang.Boolean">
+		select residential from eoi.residential_facilities_current
+		where collegeid = #{collegeId} limit 1;
+	</select>
+
+	<select id="getSDCTimingStatus" parameterType="java.lang.Integer"
+		resultType="java.lang.Boolean">
+		select sdcTimings from eoi.college_sdc_timings_current
+		where collegeid = #{collegeId} limit 1;
+	</select>
+
+	<select id="getSoicalActivitiesStatus" parameterType="java.lang.Integer"
+		resultType="java.lang.Boolean">
+		select interested from eoi.sdc_social_activities_current
+		where collegeid = #{collegeId} limit 1;
+	</select>
+
+	<insert id="saveCRTDetails" parameterType="map">
+		insert into
+		eoi.campus_recruitment_training_current(collegeid, crtHouseAvailable,
+		academicyear, companyname, areaoftraining, logtime, ipaddress)
+		values(#{p.collegeId}, true, #{p.academicYear},
+		initcap(#{p.companyName}), initcap(#{p.areaOfTraining}),
+		current_timestamp, #{p.ipAddress});
+	</insert>
+
+	<update id="updateCRTDetails" parameterType="map">
+		update
+		eoi.campus_recruitment_training_current set academicyear =
+		#{p.academicYear}, companyname = initcap(#{p.companyName}),
+		areaoftraining = initcap(#{p.areaOfTraining}), logtime =
+		current_timestamp, ipaddress = #{p.ipAddress}
+		WHERE collegeid =
+		#{p.collegeId} and id = #{p.id};
+	</update>
+
+	<insert id="saveResidentialDetails" parameterType="map">
+		insert into
+		eoi.residential_facilities_current(collegeid, residential, boys,
+		girls, guesthouse, noofroomsinguesthouse, logtime, ipaddress)
+		values(#{p.collegeId}, true, #{p.boys}, #{p.girls}, #{p.guestHouse},
+		#{p.noOfRoomsInGuestHouse}, current_timestamp, #{p.ipAddress});
+	</insert>
+
+	<update id="updateResidentialDetails" parameterType="map">
+		update
+		eoi.residential_facilities_current set boys = #{p.boys}, girls =
+		#{p.girls}, guesthouse = #{p.guestHouse},
+		noofroomsinguesthouse
+		=#{p.noOfRoomsInGuestHouse}, logtime = current_timestamp, ipaddress =
+		#{p.ipAddress}
+		WHERE collegeid = #{p.collegeId} and id = #{p.id};
+	</update>
+
+	<select id="getResidentialDetails" parameterType="java.lang.Integer"
+		resultType="Residence">
+		select distinct id, collegeid, residential, boys, girls,
+		guesthouse, noofroomsinguesthouse, logtime from
+		eoi.residential_facilities_current
+		WHERE (boys is not null OR girls is
+		not null) and collegeid = #{collegeId} order by logtime DESC;
+	</select>
+
+	<select id="getDepartment" parameterType="map" resultType="java.lang.String">
+		select name from apssdc.courses where id = #{p.departmentId};
+	</select>
+
+	<insert id="saveTimingsDetails" parameterType="map">
+		INSERT INTO
+		eoi.college_sdc_timings_current(collegeid, sdctimings, departmentid,
+		department, graduation, graduationyear,
+		skillslothours, ipaddress,
+		logtime)
+		VALUES(#{p.collegeId}, true, #{p.departmentId},
+		#{p.department}, #{p.graduation},
+		#{p.graduationYear},
+		#{p.skillSlotHours}, #{p.ipAddress},
+		current_timestamp);
+	</insert>
+
+	<update id="updateTimingsDetails" parameterType="map">
+		update
+		eoi.college_sdc_timings_current set departmentid = #{p.departmentId},
+		department = #{p.department}, graduation = #{p.graduation},
+		graduationyear = #{p.graduationYear},
+		skillslothours =
+		#{p.skillSlotHours}, ipaddress = #{p.ipAddress}, logtime =
+		current_timestamp
+		where collegeid = #{p.collegeId} and id = #{p.id};
+	</update>
+
+	<select id="getTimingsDetails" parameterType="java.lang.Integer"
+		resultType="SDCTimings">
+		select a.*, b.name department from
+		(SELECT id, collegeid,
+		sdctimings, departmentid, graduation, graduationyear,
+		skillslothours,
+		ipaddress, logtime
+		FROM eoi.college_sdc_timings_current
+		WHERE
+		departmentid is not null and collegeid = #{collegeId}) a left
+		join
+		(select id, name from apssdc.courses) b on (a.departmentid = b.id)
+		ORDER BY logtime DESC;
+	</select>
+
+	<select id="getMandals" parameterType="java.lang.Integer"
+		resultType="District">
+		select mandalid, mandalname from flp.mandal_mst where
+		districtid = #{districtId} order by mandalname;
+	</select>
+
+	<select id="getPanchayats" parameterType="map" resultType="SocialActivity">
+		select panchayatid, panchayatname from flp.panchayat_mst where
+		districtId = #{p.districtId}
+		and mandalid = #{p.mandalId} order by
+		panchayatname;
+	</select>
+
+	<select id="getVillages" parameterType="java.lang.Integer"
+		resultType="District">
+		select villageid, villagename from flp.village_mst where
+		districtId = #{p.districtId}
+		and mandalid = #{p.mandalId} and
+		panchayatid = #{p.panchayatId} order by villagename;
+	</select>
+
+	<insert id="saveSocialActivities" parameterType="map">
+		INSERT INTO
+		eoi.sdc_social_activities_current(collegeid, programid, academicyear,
+		interested, districtid, mandalid, panchayatid, villageid, ipaddress,
+		logtime)
+		VALUES(#{p.collegeId}, #{p.programId}, #{p.academicYear},
+		true, #{p.districtId},
+		#{p.mandalId}, #{p.panchayatId}, #{p.villageId},
+		#{p.ipAddress},
+		current_timestamp);
+	</insert>
+
+	<update id="updateSocialActivities" parameterType="map">
+		update
+		eoi.sdc_social_activities_current set programId = #{p.programId},
+		academicyear = #{p.academicYear}, districtid = #{p.districtId},
+		mandalid = #{p.mandalId}, villageid = #{p.villageId}, ipaddress =
+		#{p.ipAddress}, logtime = current_timestamp
+		where collegeid =
+		#{p.collegeId} AND id = #{p.id};
+	</update>
+
+	<select id="getSocialActivities" parameterType="java.lang.Integer"
+		resultType="SocialActivity">
+		select distinct a.*, b.districtname, c.mandalname,
+		d.panchayatname, e.villagename, f.name programname from
+		(SELECT id,
+		collegeid, programid, academicyear, interested, districtid, mandalid,
+		panchayatid, villageid FROM eoi.sdc_social_activities_current
+		where
+		collegeid = #{p.collegeId} AND interested = true AND programid IS NOT
+		NULL) a
+		left join
+		(select districtid, districtname from
+		apssdc.district_mst) b on (a.districtid = b.districtid)
+		left join
+		(select districtid, mandalid, mandalname from flp.mandal_mst) c on
+		(a.mandalid::int = c.mandalid and a.districtid = c.districtid)
+		left
+		join
+		(select districtid, mandalid, panchayatid, panchayatname from
+		flp.panchayat_mst) d on (a.districtid = d.districtid and
+		a.mandalid::int = d.mandalid and a.panchayatid::int = d.panchayatid)
+		left join
+		(select districtid, mandalid, panchayatid, villageid,
+		villagename from flp.village_mst) e on (a.districtid = e.districtid
+		and a.villageid::int = e.villageid and e.mandalid = a.mandalid::int
+		and a.panchayatid::int = e.panchayatid)
+		left join
+		apssdc.training_programs f on (a.programid = f.id);
+	</select>
+
+	<select id="getInternetDetails" parameterType="java.lang.Integer"
+		resultType="Internet">
+		select id, collegeid, isp, bandwidth from
+		eoi.internet_info_current where collegeid = #{collegeId};
+	</select>
+
+	<insert id="saveInternetDetails" parameterType="map">
+		insert into
+		eoi.internet_info_current(collegeid, isp, bandwidth, ipaddress,
+		logtime)
+		values(#{p.collegeId}, initcap(#{p.isp}),
+		initcap(#{p.bandwidth}), #{p.ipAddress}, current_timestamp);
+	</insert>
+
+	<update id="updateInternetActivities" parameterType="map">
+		update
+		eoi.internet_info_current set isp = initcap(#{p.isp}), bandwidth =
+		upper(#{p.bandwidth}), ipaddress = #{p.ipAddress}, logtime =
+		current_timestamp
+		WHERE collegeid = #{p.collegeId};
+	</update>
+
+	<insert id="saveLabDetails" parameterType="map">
+		INSERT INTO
+		eoi.computers_details_current(collegeid, departmentid, noofcomputers,
+		processor, ram, powerbackup,
+		availabiltysdc, ipaddress, logtime)
+		VALUES(#{p.collegeId}, #{p.departmentId}, #{p.noOfComputers},
+		upper(#{p.equipmentDetails}),
+		upper(#{p.ram}), upper(#{p.powerBackup}),
+		#{p.availableForSdc}, #{p.ipAddress}, current_timestamp);
+	</insert>
+
+	<insert id="saveFileUploadDetails" parameterType="map">
+		INSERT INTO
+		eoi.fileuploaddetails(collegeid, filepath,fileextension,
+		logtime)
+		VALUES(#{p1.collegeId},#{p1.filePath},#{p1.fileExtension},current_timestamp);
+	</insert>
+	<update id="updateLabDetails" parameterType="map">
+		UPDATE
+		eoi.computers_details_current
+		SET departmentid = #{p.departmentId},
+		noofcomputers = #{p.noOfComputers},
+		processor =
+		upper(#{p.equipmentDetails}),
+		ram = upper(#{p.ram}), powerbackup =
+		upper(#{p.powerBackup}),
+		availabiltysdc = #{p.availableForSdc},
+		ipaddress = #{p.ipAddress},
+		logtime = current_timestamp WHERE collegeid
+		= #{p.collegeId} AND
+		departmentId = #{p.departmentId};
+	</update>
+
+	<select id="getLabDetails" parameterType="java.lang.Integer"
+		resultType="Infrastructure">
+		select a.*, a.processor AS equipmentDetails,
+		a.availabiltysdc AS availableForSdc, b.name departmentname from
+		(select * from eoi.computers_details_current where collegeid =
+		#{p.collegeId}) a
+		inner join (select * from apssdc.courses) b on
+		(a.departmentid = b.id);
+	</select>
+
+	<select id="getCOEDetails" parameterType="java.lang.Integer"
+		resultType="COE">
+		select id, collegeid, company AS companyName,
+		lower(approvedperiod)::date AS approvedDate
+		from
+		eoi.center_of_excellences_current where collegeid = #{p.collegeId};
+	</select>
+	<insert id="saveCOEDetails" parameterType="map">
+		INSERT INTO
+		eoi.center_of_excellences_current(collegeid, company, approvedperiod,
+		ipaddress, logtime)
+		VALUES(#{p.collegeId}, initcap(#{p.companyName}),
+		#{p.dateRange}::tstzrange, #{p.ipAddress},
+		current_timestamp);
+	</insert>
+
+	<update id="updateCOEDetails" parameterType="map">
+		UPDATE
+		eoi.center_of_excellences_current
+		SET company =
+		initcap(#{p.companyName}), approvedperiod =
+		#{p.dateRange}::tstzrange,
+		ipaddress = #{p.ipAddress},
+		logtime = current_timestamp WHERE collegeid
+		= #{p.collegeId} AND id =
+		#{p.id};
+	</update>
+
+	<select id="getStudentExistence" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.batch_students where aadhaar =
+		#{p.aadhaar}
+	</select>
+
+	<select id="getStudentExistence1" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.batch_students where
+		registrationid =
+		#{p.registrationId}
+	</select>
+
+	<select id="getDistrictId1" parameterType="java.lang.Integer"
+		resultType="java.lang.Integer">
+		select districtid from apsche.colleges_engineering where id
+		= #{collegeId}
+	</select>
+
+	<select id="checkStudentInEdu" parameterType="map" resultType="java.lang.Integer">
+		SELECT count(*) from eoi.student_education_info WHERE
+		registrationid=
+		#{p.registrationId}
+	</select>
+
+	<select id="checkStudentInPlacement" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT count(*) from eoi.student_placement WHERE
+		registrationid= #{p.registrationId}
+	</select>
+
+	<insert id="saveDetails" parameterType="map">
+		insert into
+		eoi.batch_students(name,trainingbatchid,registrationid
+		,fathername,category,gender,dob,year,
+		phone,email,aadhaar,logtime,guid,address,
+		college,status,collegeid,programid,batchprogramid,districtid,collegecourseid,
+		mothername,
+		bloodgroup,maritalstatus,emergencycontactno,languagesknown,
+		ipaddress,
+		companyname,companypackage,workinglocation,highestqualificaion,graduationbranch,graduationyear)
+		values(#{p.name},#{p.trainingBatchId},#{p.registrationId},#{p.fathername},
+		#{p.category},#{p.gender},#{p.dob}::date,#{p.year}::integer,#{p.phone},#{p.email},#{p.aadhaar},current_timestamp,#{p.guid},
+		ROW(#{p.pincode},#{p.doorno},#{p.street},#{p.villageName},#{p.mandalName},#{p.districtName},#{p.stateName}),
+		#{p.graduationCollege},'PAID',#{p.collegeId},#{p.trainingProgramId},#{p.programId},#{p.districtId},#{p.graduationBranch},
+		#{p.mothername}, #{p.bloodGroup},
+		#{p.maritalStatus},#{p.emergencyContactNo},#{p.languagesKnown},
+		#{p.ipAddress},#{p.companyname},#{p.companypackage},#{p.workinglocation},#{p.highestqualificaion},#{p.graduationbranch},#{p.graduationyear})
+	</insert>
+	<insert id="submitDetails" parameterType="map">
+		insert into
+		eoi.intrenshala_student_details(name,trainingbatchid,registrationid
+		,fathername,category,gender,dob,year,
+		phone,email,aadhaar,logtime,guid,address,
+		college,status,collegeid,programid,batchprogramid,districtid,collegecourseid,
+		mothername,
+		bloodgroup,maritalstatus,emergencycontactno,languagesknown,
+		ipaddress,
+		companyname,companypackage,workinglocation,highestqualificaion,graduationbranch,graduationyear)
+		values(#{p.name},#{p.trainingBatchId},#{p.registrationId},#{p.fathername},
+		#{p.category},#{p.gender},#{p.dob},#{p.year}::integer,#{p.phone},#{p.email},#{p.aadhaar},current_timestamp,#{p.guid},
+		ROW(#{p.pincode},#{p.doorno},#{p.street},#{p.villageName},#{p.mandalName},#{p.districtName},#{p.stateName}),
+		#{p.graduationCollege},'PAID',#{p.collegeId},#{p.trainingProgramId},#{p.programId},#{p.districtId},#{p.graduationBranch},
+		#{p.mothername}, #{p.bloodGroup},
+		#{p.maritalStatus},#{p.emergencyContactNo},#{p.languagesKnown},
+		#{p.ipAddress},#{p.companyname},#{p.companypackage},#{p.workinglocation},#{p.highestqualificaion},#{p.graduationbranch},#{p.graduationyear})
+	</insert>
+
+
+	<insert id="saveStudentEducationDetails" parameterType="map">
+		insert
+		into eoi.student_education_info(registrationid, sscinstitute,
+		sscgpa,
+		sscpercentage ,sscboard , sscyear ,
+		interinstitute , intergpa,
+		diplomabranch,
+		interpercentage, interboard, interyear , graduationtype,
+		graduationbranch, graduationpercentage , graduationgpa
+		,graduationyear,
+		graduationuniversity, graduationcollege ,
+		othergraduactionCollege,
+		graduationbacklog, pgbranch , pgpercentage ,
+		pggpa ,
+		pgyear,pguniversity,pgcollege,otherpgCollege,pgbacklog,graduationUniversityOthers,
+		pgUniversityOthers)
+		values(#{p.registrationId},#{p.sscInstitute},#{p.sscGpa},#{p.sscPercentage},#{p.sscBoard},#{p.sscyear},#{p.interInstitute},
+		#{p.interGpa},#{p.diplomaBranch},
+		#{p.interPercentage},#{p.interBoard},#{p.interyear},#{p.graduationType},#{p.graduationBranch},
+		#{p.graduationPercentage},#{p.graduationGpa},#{p.graduationEndYear},#{p.graduationUniversity},#{p.graduationCollege},
+		#{p.otherGraduactionCollege}, #{p.graduationBacklog},
+		#{p.pgBranch},#{p.pgPercentage},#{p.pgGpa},#{p.pgyear},#{p.pgUniversity},#{p.pgCollege},
+		#{p.otherpgCollege},#{p.pgBacklog},#{p.graduationUniversityOthers},
+		#{p.pgUniversityOthers});
+	</insert>
+
+	<insert id="saveStudentPlacementDetails" parameterType="map">
+		insert
+		into eoi.student_placement(registrationid , organization ,role ,
+		joiningdate, location, logtime,
+		salary,
+		completedyear,status)values(#{p.registrationId},#{p.companyName},#{p.role},#{p.dateOfJoining}::date,#{p.location},
+		current_timestamp,#{p.annualSalary},#{p.graduationEndYear},#{p.placementStatus})
+	</insert>
+
+	<update id="updatePlacementStatus" parameterType="map">
+		update
+		eoi.student_placement set status = #{p.placementStatus} WHERE
+		registrationid = #{p.registrationId}
+	</update>
+
+	<delete id="removeSpocDetails" parameterType="map">
+		delete from
+		apsche.college_managements where (collegeid =
+		#{p.collegeId} AND
+		(aadhaar = #{p.aadhaar} OR email = #{p.spocEmail} OR phone=#{p.phone}
+		OR employeeid = #{p.employeeId})) and id=#{p.serialNumber}
+	</delete>
+
+
+	<select id="verifyCmsecSkillhubDetails" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.cmsecwillingness where
+		collegeid=#{p.collegeId};
+	</select>
+
+	<select id="getCmsecSkillhubDetails" parameterType="map"
+		resultType="CmsecWillingness">
+		select
+		collegeid as collegeId,
+		skillhubfacilitaion as
+		skillhubFacilitaion ,
+		collegeSpace as collegeSpace ,
+		labexpences as
+		labExpences ,
+		labfacilityOutsideStudents as labFacilityOutsideStudents
+		,
+		labsafety as
+		labSafety ,
+		residentialfoodfacility as
+		residentialFoodFacility ,
+		initiativeprograms as initiativePrograms ,
+		exclusivesdc as exclusiveSdc
+		,
+		siemenscenter,
+		commitment,
+		foodfacility
+		from
+		eoi.cmsecwillingness where
+		collegeid=#{collegeId} limit 1;
+	</select>
+
+	<select id="getConsortiumMemberDetails" parameterType="map"
+		resultType="map">
+		select a.*, b.* from
+		(select a.*, c.* from
+		(select
+		collegeid,
+		collegename, location, aadhaar, name, gender, email, phone,
+		designation, department, highesteducation,
+		logtime::date logDate from
+		collaborations.registration where programid = 95 and
+		collegeid=#{collegeId}) a
+		inner join
+		(select districtid, id from
+		apsche.colleges_engineering) b on (a.collegeid = b.id)
+		inner join
+		(select districtid, districtname from apssdc.district_mst) c on
+		(b.districtid = c.districtid)) a
+		left join
+		(select collegeid, aadhaar,
+		status, addedon, amount from collaborations.payu) b on
+		(a.collegeid =
+		b.collegeid and a.aadhaar = b.aadhaar and b.status = 'success')
+		order
+		by a.districtid, a.collegename;
+
+	</select>
+
+	<insert id="saveCmsecSkillhubDetails" parameterType="map">
+		insert into
+		eoi.cmsecwillingness (skillhubfacilitaion,collegeSpace,labExpences
+		,labFacilityOutsideStudents ,labSafety,residentialFoodFacility
+		,initiativePrograms ,exclusiveSdc
+		,commitment,collegeid,siemenscenter,foodfacility)
+		VALUES
+		(#{p.skillhubFacilitaion},#{p.collegeSpace},#{p.labExpences},#{p.labFacilityOutsideStudents},#{p.labSafety},#{p.residentialFoodFacility},#{p.initiativePrograms},#{p.exclusiveSdc},#{p.commitment},#{p.collegeId},#{p.siemenscenter},#{p.foodfacility})
+	</insert>
+
+	<update id="updateCmsecSkillhubDetails" parameterType="map">
+		update
+		eoi.cmsecwillingness
+		set
+		skillhubfacilitaion=#{p.skillhubFacilitaion},
+		collegespace=#{p.collegeSpace},
+		labexpences=#{p.labExpences},
+		labfacilityoutsidestudents=#{p.labFacilityOutsideStudents},
+		labsafety=#{p.labSafety},
+		residentialfoodfacility=#{p.residentialFoodFacility},
+		initiativeprograms=#{p.initiativePrograms},
+		exclusivesdc=#{p.exclusiveSdc},
+		siemenscenter=#{p.siemenscenter},
+		commitment=#{p.commitment},
+		foodfacility=#{p.foodfacility}
+		WHERE
+		collegeid=#{p.collegeId};
+	</update>
+
+
+	<select id="verifyAuditoriamSummary" parameterType="map"
+		resultType="java.lang.Integer">
+		select count(*) from eoi.auditoriam_details where
+		collegeid=#{p.collegeId};
+	</select>
+
+	<select id="getAuditoriamDetails" parameterType="map"
+		resultType="map">
+		select id,collegeid ,
+		sqft ,
+		seationgcapacity ,
+		centralac ,
+		projectorscount ,
+		builtinaudiosystem ,
+		auditoriamimage from
+		eoi.auditoriam_details where collegeid=#{p.collegeId};
+	</select>
+	<delete id="deleteAuditoriamDetails" parameterType="map">
+		delete
+		from
+		eoi.auditoriam_details where collegeid=#{p.collegeId} and
+		id=#{p.id};
+	</delete>
+
+
+	<insert id="insertAuditoriamSummary" parameterType="map">
+		insert
+		into
+		eoi.auditoriam_details (collegeid ,sqft ,seationgcapacity
+		,centralac
+		,projectorscount ,builtinaudiosystem ,auditoriamimage )
+		VALUES
+		(#{p.collegeId},#{p.sqft},#{p.seationgcapacity},#{p.centralac},#{p.projectorscount},#{p.builtinaudiosystem},#{p.auditoriamimage});
+	</insert>
+
+	<update id="updateAuditoriamSummary" parameterType="map">
+		update
+		eoi.auditoriam_details
+		set
+		sqft =#{p.sqft},
+		seationgcapacity
+		=#{p.seationgcapacity},
+		centralac
+		=#{p.centralac},
+		projectorscount
+		=#{p.projectorscount},
+		builtinaudiosystem =#{p.builtinaudiosystem},
+		auditoriamimage
+		=#{p.auditoriamimage}
+		WHERE collegeid=#{p.collegeId};
+	</update>
+
+	<select id="getPastProgramsSummarySip" parameterType="map"
+		resultType="map">
+		select a.id AS programId, a.name AS programName,
+		a.educationYear, count(*) trainees from
+		(select id, name,
+		case
+		when
+		startdate between '2014-04-01' and '2015-03-31' then '2014-2015'
+		when
+		startdate between '2015-04-01' and '2016-03-31' then '2015-2016'
+		when
+		startdate between '2016-04-01' and '2017-03-31' then '2016-2017'
+		when
+		startdate between '2017-04-01' and '2018-03-31' then '2017-2018' end
+		as educationYear
+		from apssdc.training_programs where startdate is not
+		null) a inner join
+		apssdc.batch_students b on (a.id=b.programid and
+		b.collegeid = #{collegeId}) inner join
+		apssdc.district_mst c on
+		(b.districtid=c.districtid) where
+		status='PAID' and year is not null
+		and programid not in (107)
+		group by a.id, a.name, a.educationYear order
+		by a.educationYear DESC, a.name ASC;
+	</select>
+
+	<select id="getEoiRegisteredColleges" parameterType="map"
+		resultType="map">
+		select a.*,b.name,c.districtname from
+		(select distinct
+		collegeid from eoi.payu where amount='1000.00' and
+		status='success'
+		order by collegeid)a
+		left join
+		(select id,name ,districtid from
+		apsche.colleges_engineering)b on
+		a.collegeid::int=b.id
+		left join
+		(select
+		districtid,districtname from apssdc.district_mst)c on
+		b.districtid=c.districtid
+		order by c.districtid,b.name ;
+	</select>
+
+	<select id="getEoiRegisteredDepartments" parameterType="map"
+		resultType="map">
+		select c.districtname,b.id,b.name college,d.amount,e.name
+		from (select *
+		from eoi.payu where status='success' and
+		amount::float='1000.00') a
+		inner join apsche.colleges_engineering b on
+		(a.collegeid::int=b.id)
+		inner join apssdc.district_mst c on
+		(b.districtid=c.districtid) inner
+		join eoi.payu d on
+		(a.collegeid=d.collegeid) left join apssdc.courses
+		e on
+		(d.departmentid::int=e.id)
+		where d.status='success' and
+		d.amount::float='500.00' order by
+		c.districtid,d.collegeid
+	</select>
+
+	<select id="getPlacedData" parameterType="map" resultType="map">
+		select a.*,b.name from
+		(select count(*),collegeid from
+		eoi.batch_students group by collegeid )a
+		left join
+		(select id,name from
+		apsche.colleges_engineering)b on a.collegeid::int=b.id order by
+		b.name;
+	</select>
+
+	<select id="getSlotCollegeDetails" parameterType="map"
+		resultType="map">
+		select collegeid,email,phone,membershipid from eoi.payu
+		where amount='1000.00' and status='success' and
+		collegeid::int=#{collegeId};
+	</select>
+
+	<select id="getEoiDistrictWiseConsolidatedProgramRep"
+		parameterType="map" resultType="map">
+		<!-- select p.collegeid, p.districtname,p.name college,p.sipp_count,p.sip_count,p.fipp_count,p.fip_count,p.nup_count,p.nu_count,p.uif_count, 
+			p.epicp_count,p.epic_count,p.iieecpp_count,p.iieecp_count, rank() OVER (PARTITION 
+			BY p.districtid ORDER BY p.sip_count desc ,sipp_count desc) from (select 
+			a.collegeid,c.districtid,c.districtname,b.name ,coalesce(a.count,0) sipp_count,coalesce(a.student_count,0) 
+			sip_count,coalesce(d.fipp_count,0) fipp_count,coalesce(d.fip_count,0) fip_count 
+			,coalesce(e.uif_count,0) uif_count, coalesce(f.nup_count,0) nup_count,coalesce(f.nu_count,0) 
+			nu_count,coalesce(g.epicp_count,0) epicp_count,coalesce(g.epic_count,0) epic_count,coalesce(h.iieecpp_count,0) 
+			iieecpp_count,coalesce(h.iieecp_count,0) iieecp_count from (select * from 
+			apsche.colleges_engineering where id in (select distinct collegeid::int from 
+			eoi.payu where status='success' and amount::float='1000.00')) b left join 
+			(select collegeid,count(distinct programid),count(*) student_count from apssdc.batch_students 
+			where status='PAID' group by collegeid having count(*)>10) a on (b.id=a.collegeid) 
+			left join apssdc.district_mst c on (b.districtid=c.districtid) left join 
+			(select collegeid,count(distinct programid) fipp_count,count(*) fip_count 
+			from fip.registration group by collegeid ) d on (a.collegeid=d.collegeid) 
+			left join (select collegeid,count(*) uif_count from uif.batch_students group 
+			by collegeid ) e on(a.collegeid=e.collegeid) left join (select collegeid,count(distinct 
+			programid)nup_count,count(*) nu_count from apssdc.batch_students where programid 
+			in (93,137,138,143) and status='PAID' group by collegeid ) f on (a.collegeid=f.collegeid) 
+			left join (select a.collegeid,a.epicp_count,sum(a.epic_count) epic_count 
+			from (select collegeid,count(distinct programid) epicp_count,count(*) epic_count 
+			from collaborations.registration where programid in (51) group by collegeid 
+			union select collegeid,count(distinct programid) epicp_count,count(*) epic_count 
+			from fip.registration where programid in (19) group by collegeid) a group 
+			by a.collegeid,a.epicp_count ) g on (a.collegeid=g.collegeid) left join (select 
+			collegeid,count(distinct programid) iieecpp_count,count(*) iieecp_count from 
+			fip.registration where programid in (20) group by collegeid ) h on (a.collegeid=h.collegeid) 
+			where c.districtid between 1 and 13) p -->
+
+		select p.collegeid, p.districtname,p.name
+		college,p.sipp_count,p.sip_count,p.fipp_count,p.fip_count,p.nup_count,p.nu_count,p.uif_count,p.epicp_count,
+		p.epic_count,p.iieecpp_count,p.iieecp_count,p.icount,p.iscount,coalesce(q.student_count,0)
+		"cy_count",coalesce(r.student_count,0)
+		"total_count",coalesce(s.payamount,0) payamount,
+		rank() OVER (PARTITION
+		BY p.districtid ORDER BY coalesce(r.student_count,0)
+		desc,coalesce(q.student_count,0) desc,p.iscount
+		desc,coalesce(s.payamount,0) desc) from
+		(select b.id
+		collegeid,c.districtid,c.districtname,b.name
+		,coalesce(a.count,0)
+		sipp_count,coalesce(a.student_count,0)
+		sip_count,coalesce(d.fipp_count,0) fipp_count,coalesce(d.fip_count,0)
+		fip_count ,coalesce(e.uif_count,0) uif_count,
+		coalesce(f.nup_count,0)
+		nup_count,coalesce(f.nu_count,0) nu_count,coalesce(g.epicp_count,0)
+		epicp_count,coalesce(g.epic_count,0)
+		epic_count,coalesce(h.iieecpp_count,0)
+		iieecpp_count,coalesce(h.iieecp_count,0)
+		iieecp_count,coalesce(nup_count+g.epicp_count+h.iieecpp_count+1,0)
+		icount,coalesce(nu_count+uif_count+g.epic_count+h.iieecp_count,0)
+		iscount
+		from (select * from apsche.colleges_engineering where id in
+		(select
+		distinct collegeid::int from eoi.payu where status='success'
+		and
+		amount::float='1000.00')) b left join (select
+		collegeid,count(distinct
+		programid),count(*) student_count from
+		apssdc.batch_students where
+		status='PAID' group by collegeid having
+		count(*)>10) a
+		on (b.id=a.collegeid) left join apssdc.district_mst c on
+		(b.districtid=c.districtid) left join
+		(select collegeid,count(distinct
+		programid) fipp_count,count(*) fip_count
+		from
+		fip.registration group by
+		collegeid ) d on (a.collegeid=d.collegeid)
+		left join (select
+		collegeid,count(*) uif_count from uif.batch_students
+		group by collegeid
+		) e
+		on(a.collegeid=e.collegeid) left join (select
+		collegeid,count(distinct
+		programid)nup_count,count(*) nu_count from
+		apssdc.batch_students where
+		programid in (93,137,138,143) and
+		status='PAID' group by collegeid ) f
+		on (a.collegeid=f.collegeid) left
+		join
+		(select a.collegeid,a.epicp_count,sum(a.epic_count) epic_count
+		from (select
+		collegeid,count(distinct programid) epicp_count,count(*)
+		epic_count
+		from collaborations.registration where
+		programid in (51)
+		group by collegeid
+		union
+		select collegeid,count(distinct programid)
+		epicp_count,count(*) epic_count
+		from fip.registration where
+		programid in
+		(19) group by collegeid) a group by a.collegeid,a.epicp_count ) g
+		on
+		(a.collegeid=g.collegeid) left join
+		(select collegeid,count(distinct
+		programid) iieecpp_count,count(*)
+		iieecp_count from fip.registration
+		where
+		programid in (20) group by collegeid ) h on
+		(a.collegeid=h.collegeid)
+		where c.districtid between 1 and 13) p left
+		join (select
+		c.collegeid,c.eduyear,count(programid)
+		pcount,sum(student_count)
+		student_count from (select case
+		when
+		b.startdate between '2017-04-01' and '2018-03-31' then '2017-2018'
+		end
+		as eduyear,a.collegeid,a.programid,a.student_count from (select
+		collegeid, programid,count(*) student_count from apssdc.batch_students
+		where status='PAID' group by collegeid,programid having count(*)>10) a
+		inner join apssdc.training_programs b on (a.programid=b.id)) c where
+		eduyear is not null group by c.collegeid,c.eduyear) q on
+		(p.collegeid=q.collegeid) left join (select
+		c.collegeid,count(programid) pcount,sum(student_count) student_count
+		from (select a.collegeid,a.programid,a.student_count from (select
+		collegeid, programid,count(*) student_count from apssdc.batch_students
+		where status='PAID' group by collegeid,programid having count(*)>10) a
+		inner join apssdc.training_programs b on (a.programid=b.id)) c group
+		by c.collegeid) r on (p.collegeid=r.collegeid) left join (select
+		collegeid,sum(amount::float) payamount from apssdc.payu where
+		status='success' group by collegeid) s on (p.collegeid=s.collegeid);
+	</select>
+
+	<select id="getEoiOverallRankingRep" parameterType="map"
+		resultType="map">
+		<!-- select p.collegeid, p.districtname,p.name college,p.sipp_count,p.sip_count,p.fipp_count,p.fip_count,p.nup_count,p.nu_count,p.uif_count,p.epicp_count,p.epic_count,p.iieecpp_count,p.iieecp_count, 
+			rank() OVER (ORDER BY p.sip_count desc ,sipp_count desc) from (select a.collegeid,c.districtid,c.districtname,b.name 
+			,coalesce(a.count,0) sipp_count,coalesce(a.student_count,0) sip_count,coalesce(d.fipp_count,0) 
+			fipp_count,coalesce(d.fip_count,0) fip_count ,coalesce(e.uif_count,0) uif_count, 
+			coalesce(f.nup_count,0) nup_count,coalesce(f.nu_count,0) nu_count,coalesce(g.epicp_count,0) 
+			epicp_count,coalesce(g.epic_count,0) epic_count,coalesce(h.iieecpp_count,0) 
+			iieecpp_count,coalesce(h.iieecp_count,0) iieecp_count from (select * from 
+			apsche.colleges_engineering where id in (select distinct collegeid::int from 
+			eoi.payu where status='success' and amount::float='1000.00')) b left join 
+			(select collegeid,count(distinct programid),count(*) student_count from apssdc.batch_students 
+			where status='PAID' group by collegeid having count(*)>10) a on (b.id=a.collegeid) 
+			left join apssdc.district_mst c on (b.districtid=c.districtid) left join 
+			(select collegeid,count(distinct programid) fipp_count,count(*) fip_count 
+			from fip.registration group by collegeid ) d on (a.collegeid=d.collegeid) 
+			left join (select collegeid,count(*) uif_count from uif.batch_students group 
+			by collegeid ) e on(a.collegeid=e.collegeid) left join (select collegeid,count(distinct 
+			programid)nup_count,count(*) nu_count from apssdc.batch_students where programid 
+			in (93,137,138,143) and status='PAID' group by collegeid ) f on (a.collegeid=f.collegeid) 
+			left join (select a.collegeid,a.epicp_count,sum(a.epic_count) epic_count 
+			from (select collegeid,count(distinct programid) epicp_count,count(*) epic_count 
+			from collaborations.registration where programid in (51) group by collegeid 
+			union select collegeid,count(distinct programid) epicp_count,count(*) epic_count 
+			from fip.registration where programid in (19) group by collegeid) a group 
+			by a.collegeid,a.epicp_count ) g on (a.collegeid=g.collegeid) left join (select 
+			collegeid,count(distinct programid) iieecpp_count,count(*) iieecp_count from 
+			fip.registration where programid in (20) group by collegeid ) h on (a.collegeid=h.collegeid) 
+			where c.districtid between 1 and 13) p; -->
+		select p.collegeid, p.districtname,p.name
+		college,p.sipp_count,p.sip_count,p.fipp_count,p.fip_count,p.nup_count,p.nu_count,p.uif_count,p.epicp_count,
+		p.epic_count,p.iieecpp_count,p.iieecp_count,p.icount,p.iscount,coalesce(q.student_count,0)
+		"cy_count",coalesce(r.student_count,0)
+		"total_count",coalesce(s.payamount,0) payamount,
+		rank() OVER (ORDER BY
+		coalesce(r.student_count,0)
+		desc,coalesce(q.student_count,0)
+		desc,p.iscount
+		desc,coalesce(s.payamount,0) desc) from
+		(select b.id
+		collegeid,c.districtid,c.districtname,b.name
+		,coalesce(a.count,0)
+		sipp_count,coalesce(a.student_count,0)
+		sip_count,coalesce(d.fipp_count,0) fipp_count,coalesce(d.fip_count,0)
+		fip_count ,coalesce(e.uif_count,0) uif_count,
+		coalesce(f.nup_count,0)
+		nup_count,coalesce(f.nu_count,0) nu_count,coalesce(g.epicp_count,0)
+		epicp_count,coalesce(g.epic_count,0)
+		epic_count,coalesce(h.iieecpp_count,0)
+		iieecpp_count,coalesce(h.iieecp_count,0)
+		iieecp_count,coalesce(nup_count+g.epicp_count+h.iieecpp_count+1,0)
+		icount,coalesce(nu_count+uif_count+g.epic_count+h.iieecp_count,0)
+		iscount
+		from (select * from apsche.colleges_engineering where id in
+		(select
+		distinct collegeid::int from eoi.payu where status='success'
+		and
+		amount::float='1000.00')) b left join (select
+		collegeid,count(distinct
+		programid),count(*) student_count from
+		apssdc.batch_students where
+		status='PAID' group by collegeid having
+		count(*)>10) a
+		on (b.id=a.collegeid) left join apssdc.district_mst c on
+		(b.districtid=c.districtid) left join
+		(select collegeid,count(distinct
+		programid) fipp_count,count(*) fip_count
+		from
+		fip.registration group by
+		collegeid ) d on (a.collegeid=d.collegeid)
+		left join (select
+		collegeid,count(*) uif_count from uif.batch_students
+		group by collegeid
+		) e
+		on(a.collegeid=e.collegeid) left join (select
+		collegeid,count(distinct
+		programid)nup_count,count(*) nu_count from
+		apssdc.batch_students where
+		programid in (93,137,138,143) and
+		status='PAID' group by collegeid ) f
+		on (a.collegeid=f.collegeid) left
+		join
+		(select a.collegeid,a.epicp_count,sum(a.epic_count) epic_count
+		from (select
+		collegeid,count(distinct programid) epicp_count,count(*)
+		epic_count
+		from collaborations.registration where
+		programid in (51)
+		group by collegeid
+		union
+		select collegeid,count(distinct programid)
+		epicp_count,count(*) epic_count
+		from fip.registration where
+		programid in
+		(19) group by collegeid) a group by a.collegeid,a.epicp_count ) g
+		on
+		(a.collegeid=g.collegeid) left join
+		(select collegeid,count(distinct
+		programid) iieecpp_count,count(*)
+		iieecp_count from fip.registration
+		where
+		programid in (20) group by collegeid ) h on
+		(a.collegeid=h.collegeid)
+		where c.districtid between 1 and 13) p left
+		join (select
+		c.collegeid,c.eduyear,count(programid)
+		pcount,sum(student_count)
+		student_count from (select case
+		when
+		b.startdate between '2017-04-01' and '2018-03-31' then '2017-2018'
+		end
+		as eduyear,a.collegeid,a.programid,a.student_count from (select
+		collegeid, programid,count(*) student_count from apssdc.batch_students
+		where status='PAID' group by collegeid,programid having count(*)>10) a
+		inner join apssdc.training_programs b on (a.programid=b.id)) c where
+		eduyear is not null group by c.collegeid,c.eduyear) q on
+		(p.collegeid=q.collegeid) left join (select
+		c.collegeid,count(programid) pcount,sum(student_count) student_count
+		from (select a.collegeid,a.programid,a.student_count from (select
+		collegeid, programid,count(*) student_count from apssdc.batch_students
+		where status='PAID' group by collegeid,programid having count(*)>10) a
+		inner join apssdc.training_programs b on (a.programid=b.id)) c group
+		by c.collegeid) r on (p.collegeid=r.collegeid) left join (select
+		collegeid,sum(amount::float) payamount from apssdc.payu where
+		status='success' group by collegeid) s on (p.collegeid=s.collegeid);
+	</select>
+
+	<select id="getEoiCollegeWiseRep" parameterType="map"
+		resultType="map">
+		select c.collegeid,d.name
+		college,c.eduyear,count(programid) pcount,sum(student_count) from
+		(select case
+		when b.startdate between '2014-04-01' and '2015-03-31'
+		then '2014-2015'
+		when b.startdate between '2015-04-01' and '2016-03-31'
+		then '2015-2016'
+		when b.startdate between '2016-04-01' and '2017-03-31'
+		then '2016-2017'
+		when b.startdate between '2017-04-01' and '2018-03-31'
+		then '2017-2018' end
+		as eduyear,a.collegeid,a.programid,a.student_count
+		from (select collegeid, programid,count(*) student_count from
+		apssdc.batch_students where status='PAID' group by collegeid,programid
+		having count(*)>10) a
+		inner join apssdc.training_programs b on
+		(a.programid=b.id)) c inner join apsche.colleges_engineering d on
+		(c.collegeid=d.id) where c.collegeid=#{collegeId} and eduyear is not
+		null group by c.collegeid,d.name,c.eduyear order by c.eduyear
+	</select>
+
+	<select id="getEoiStatusReport" parameterType="map" resultType="map">
+		select a.collegeid,c.eamcetcode,c.name college,d.districtname,b.* from
+		(select
+		distinct collegeid::int from eoi.payu where status='success'
+		and
+		amount::float='1000.00')a left join
+		(select collegeid,count(distinct
+		registrationid)distinctcount,count(registrationid) total,sum(case when
+		name is null then 1 else 0 end ) noname,sum(case when companyname is
+		not null then 1 else 0 end ) placed,sum(case when companyname is null
+		then 1 else 0 end ) notplaced,sum(case when length(aadhaar)!=12 and
+		graduationyear='2018' then 1 else 0 end ) noaadhaar,
+		sum(case when
+		category is null then 1 else 0 end ) nocategory,
+		sum(case when phone is
+		null then 1 else 0 end ) nophone,
+		sum(case when email is null then 1
+		else 0 end ) noemail,
+		sum(case when highestqualificaion is null then 1
+		else 0 end ) nohighedu
+		from eoi.batch_students group by collegeid) b on
+		(a.collegeid=b.collegeid)
+		inner join apsche.colleges_engineering c on
+		(a.collegeid=c.id) inner
+		join apssdc.district_mst d on
+		(c.districtid=d.districtid) order by
+		d.districtid,a.collegeid
+	</select>
+	<!-- <select id="getAadhaarCount" parameterType="map" resultType="map">
+		SELECT sum(case when length(aadhaar)=12 then 1 else 0 end ) aadhaar,
+		sum(case when length(aadhaar)!=12 then 1 else 0 end )noaadhaar
+		from
+		eoi.intrenshala_student_details group by collegeid
+	</select> -->
+	<insert id="setWorkshopCommitment" parameterType="java.util.List">
+		INSERT INTO eoi.workshop_commitment_2018(collegeid, courseid,
+		avaliabledate, studentcount)
+		VALUES
+		<foreach collection="list" item="p" index="index" open="("
+			separator="),(" close=")">
+			#{p.collegeId},
+			#{p.courseId},
+			#{p.avaliableDate},
+			#{p.studentCount}
+		</foreach>
+	</insert>
+
+	<select id="getWorkshopCommitment" parameterType="map"
+		resultType="map">
+		SELECT id, collegeid, courseid, avaliabledate, studentcount
+		FROM eoi.workshop_commitment_2018 where collegeid=#{collegeId};
+	</select>
+
+	<select id="verifyWorkshopCommitment" parameterType="map"
+		resultType="java.lang.Integer">
+		SELECT count(*) from eoi.workshop_commitment_2018 where
+		collegeid=#{p.collegeId};
+	</select>
+
+
+
+
+
+</mapper>

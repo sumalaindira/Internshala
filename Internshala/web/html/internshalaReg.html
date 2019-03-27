@@ -1,0 +1,224 @@
+<script src="/internshala/scripts/general/internshalaModule.js"></script>
+
+<!-- <script src="/eoi/scripts/general/xlsx-model.js"></script>
+<script src="/eoi/scripts/general/applicationCommons.js"></script> -->
+
+<style type="text/css">
+.glyphicon-refresh-animate {
+	-animation: spin .7s infinite linear;
+	-ms-animation: spin .7s infinite linear;
+	-webkit-animation: spinw .7s infinite linear;
+	-moz-animation: spinm .7s infinite linear;
+}
+  
+@ 
+keyframes spin {from { transform:scale(1)rotate(0deg);
+	
+} 
+
+to {
+	transform: scale(1) rotate(360deg);
+} 
+
+}
+@
+-webkit-keyframes spinw {from { -webkit-transform:rotate(0deg);
+	
+}
+
+to {
+	-webkit-transform: rotate(360deg);
+}
+
+}
+@
+-moz-keyframes spinm {from { -moz-transform:rotate(0deg);
+	
+}
+
+to {
+	-moz-transform: rotate(360deg);
+}
+
+}
+a {
+	cursor: pointer;
+}
+</style>
+<div class="container" id="xls" data-ng-controller="xlsxCtrl as XlsCtrl">
+
+	<div class="container">
+		<!-- <div class="text-center">
+			<h5 style="font-size: large;">Intenshala Registration</h5>
+		</div> -->
+		<div class="panel panel-default" style="width: 100%">
+			<div class="panel-heading">
+				<h5 style="font-size: large;" class="text-center">Internshala Registration</h5>
+			</div>
+			<div class="panel-body">
+				<!-- <p>
+					<b style="color: red; text-decoration: underline;">Note: </b>
+				</p>
+				<ul style="list-style-type: disc; margin-left: -1%;">
+					<li>APSSDC is working along with Internshala to offer industry
+						grade internships to students</li>
+					<li>&nbsp;&nbsp; <a
+						href="http://engineering.apssdc.in/uploads/ExcelFormat.xlsx"
+						style="color: #2a6496; text-decoration: underline;"
+						target="_blank"> Download sample file&nbsp;&nbsp; <img
+							alt="No image" src="/andromeda/images/icons/excel-icon.png"
+							style="height: 22px; width: 15px;">
+					</a>
+					</li>
+					 <li>Follow the format like given in the excel example.</li>
+                             <li>Click on button to watch video.
+                                 <a href="#" class="btn btn-default btn-xs" data-toggle="modal" data-target="#videoModal"
+   										data-theVideo="https://www.youtube.com/embed/eeEEIKEzCiw">VIDEO</a>
+                             </li>
+                             <li>Placed data for batches 2014-2015 , 2015-2016, 2016-2017 , 2017-2018 </li>
+                             <li>Non-paced data current running all years from 1st to 4th year </li>
+                             <li>Do not place dummy data like xxx, 000 , non placed  and any others. </li>
+                             <li>If fields are not present jsut leave empty. </li>
+
+				</ul> -->    
+				<br /> <br />  
+				<div class="col-md-12 row">
+					<div class="form-group col-md-4">
+						<label>Full Name:</label> <input class="form-control"
+							data-ng-model="data.object.spocName" required="required"
+							placeholder="Enter name" title="Enter the name" autofocus="">
+
+					</div>
+					<div class="form-group col-md-4">
+						<label>Email:</label> <input class="form-control"
+							data-ng-model="data.object.spocEmail" required="required"
+							placeholder="xxxxxx@gmail.com"
+							pattern="^[A-Za-z0-9.$_]*[@][a-z]{3,50}.(com|gov|org|office|co.in|edu|in|ac.in|edu.in)"
+							title="Enter valid email-Id" />
+					</div>
+					<div class="form-group col-md-4">
+						<label>Phone:</label> <input class="number form-control"
+							data-ng-model="data.object.spocPhone" required="required"
+							pattern="^[9|7|8][0-9]{9}" maxlength=10
+							placeholder="Enter phone number"
+							title="starts with 9 or 7 or 8 and should be 10 digits" />
+					</div>
+					<div class="form-group col-md-4">
+						<label>College Name:</label> <input class="form-control"
+							data-ng-model="data.object.collegeName" required="required"
+							placeholder="Enter name" title="Enter the name" autofocus="">
+
+					</div>
+
+
+
+					  <div class="form-group col-md-4">
+                                <label class="control-label">Passout Year</label> <select class="form-control" name="degree"  data-ng-model="data.object.year">
+									<option value="">---Select year--</option>
+									<option value="1">1st Year</option>
+									<option value="2">2nd Year</option>
+									<option value="3">3rd Year</option>
+									<option value="4">4th Year</option>
+									<option value="all">All Year</option>
+									
+								</select>
+                            </div>
+
+					<div class="form-group col-md-4" style="font-size: medium;">
+						<label class="control-label">Upload</label> <input type="file"
+							data-xlsx-model="data.excel" multiple>
+						<!-- onchange="angular.element(this).scope().uploadFile(this,'studentsDataUpload');"> -->
+
+					</div>
+
+					<div class="col-md-4 center-block"
+						style="margin-top: 2.5%; margin-left: 40%;">
+						<button type="button" class="btn btn-success"
+							data-ng-click="submit(data.excel,data.object);">Submit</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- <div class="container">
+
+		   <table id="aadhaartable"><tbody id="aadhaar"><tr><th>Aadhaar:</th></tr> <tr  data-ng-repeat="data in aadhaardata">
+						<td align="right">{{data.aadhaar}}</td>
+						<td align="right">{{data.noaadhaar }}</td></tr></tbody>
+				 </table> 
+           <div data-ng-repeat="d in aadhaardata"> 
+               
+                   <span class="text-center"> <span>No.of Aadhaar: <b
+				    style="color: green;">{{(aadhaardata.aadhaar}}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			          <!-- <span>No.of colleges: <b style="color: green;">{{(programCoursefilterData| filter:search | unique : 'college').length}}</b></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			       <span>Empty Aadhaar: <b style="color: green;">{{aadhaardata.length}}</b></span>
+		         </span> </div>
+		<div>
+			<h5 style="font-size: large;">
+				<button type="button" class="btn btn-xs btn-default pull-right"
+					title="Search" id="coeSearchBtn" style="margin-right: 1%;"
+					data-ng-click="toggle('internshalaSummarySearch');">
+					<span class="glyphicon glyphicon-search" style="color: green;"></span>
+				</button>
+				<button type="button" class="btn btn-xs btn-default pull-right"
+					data-ng-click="exportToExcel('myTable');" title="Download excel"
+					style="margin-right: 1%;">
+					<img alt="No image" src="/andromeda/images/icons/excel-icon.png"
+						style="height: 22px; width: 15px;">
+				</button>
+			</h5>
+		</div>
+
+		  <div>
+             	   <table class="table table-bordered" style="margin-right: 14%;" id="myTable">
+                    <thead>
+                        <tr style="color: #333; background-color: #f5f5f5;">
+                            <th>S.No.</th>
+                            <th>Registration Id</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Email</th>
+                            <th>Company Name</th>   
+                            <th>Graduation Year</th>
+                            <th>Action</th>
+                        </tr>
+                        <tr id="internshalaSummarySearch">
+                            <th></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.registrationId"></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.name"></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.phone"></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.email"></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.companyname"></th>
+                            <th><input type="text" class="form-control" data-ng-model="search.graduationyear"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="internshalaSummaryBody">   
+                        <tr data-ng-repeat="data in singleCollegeStudentsSummary">
+							<td align="right">{{$index+1}}</td>
+							<td>{{data.registrationid || '-'}}</td>   
+							<td>{{data.name || '-'}}</td>
+							<td>{{data.phone || '-'}}</td>
+							<td>{{data.email || '-'}}</td>
+							<td>{{data.companyname || '-'}}</td>
+							<td>{{data.graduationyear || '-'}}</td>
+							<td> 
+							  <button type="button" style="padding: 2px 4px;width: 27px;height: 28px;" id="editData" 
+							        data-ng-click="internshalaStudentsSummaryGetById(x.id)" class="btn btn-success btn-md"
+							        data-toggle="modal" data-target="#myModal">
+									<span class="glyphicon glyphicon-pencil"></span>
+							      </button> 
+							</td>
+						</tr>
+                    </tbody>
+                    <tbody id="noSummaryData"></tbody>
+                </table>
+				</div>
+	</div>
+ -->
+<script>
+    jQuery(document).ready(function(){
+      angular.bootstrap(jQuery("#xls"), ['xlsxMod']);
+    });
+  </script>
+
